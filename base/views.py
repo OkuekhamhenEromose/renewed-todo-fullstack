@@ -13,9 +13,11 @@ from django.contrib.auth.forms import UserCreationForm
 # Imports for Reordering Feature
 from django.views import View
 from django.contrib.auth import logout
-
+from django.db import transaction
 
 from .models import Task
+from .forms import PositionForm
+from django.http import Http404
 
 class CustomLogoutView(View):
     def get(self, request, *args, **kwargs):
@@ -94,6 +96,29 @@ class DeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     context_object_name = 'task'
     success_url = reverse_lazy('tasks')
+    template_name = 'base/task_confirm_delete.html'
     def get_queryset(self):
-        owner = self.request.user
-        return self.model.objects.filter(user=owner)
+        """Ensure users can only delete their own tasks"""
+        return super().get_queryset().filter(user=self.request.user)
+    
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests with a 404 if task doesn't exist or doesn't belong to user"""
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            # You could add a message here if you want
+            return redirect(self.success_url)
+
+    
+class TaskReorder(View):
+    def post(self, request):
+        form = PositionForm(request.POST)
+
+        if form.is_valid():
+            positionList = form.cleaned_data["position"].split(',')
+
+            with transaction.atomic():
+                self.request.user.set_task_order(positionList)
+
+        return redirect(reverse_lazy('tasks'))
+
