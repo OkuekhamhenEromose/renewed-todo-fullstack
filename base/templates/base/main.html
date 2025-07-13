@@ -67,7 +67,7 @@
         }
 
         .app-header {
-            background-color: var(--primary-color);
+            background-color: #7f8c8d;
             color: white;
             padding: 20px;
             text-align: center;
@@ -488,20 +488,6 @@
             flex-direction: column;
         }
 
-        /* Form Error Notification */
-        /* .form-error-notification {
-            position: relative;
-            margin: -10px 0 15px 0;
-            padding: 12px 20px;
-            background-color: #fdecea;
-            color: var(--danger-color);
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid var(--danger-color);
-            animation: fadeIn 0.3s ease-out;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        } */
-
         .form-error-notification {
             margin: -10px 0 15px 0;
             padding: 15px;
@@ -646,6 +632,37 @@
             list-style: none;
         }
 
+        .overlay {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            z-index: 2;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .bar {
+            width: 100vw;
+            height: 100vh;
+            background: #b2babb;
+            pointer-events: auto;
+        }
+
+        .counter {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            z-index: 1000;
+            color: #1c2833;
+            padding: 0.2rem 0.4rem;
+            font-size: 20vw;
+            font-family: "Nova Square", sans-serif;
+            font-weight: 700;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
 
@@ -665,10 +682,52 @@
 
 <body>
     {% block content %}
-    <h1 class="counter">0</h1>
+    
     {% endblock content %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
     <script>
+        function startLoader() {
+
+            let counterElement = document.querySelector('.counter');
+            let currentValue = 0;
+            function updateCounter() {
+                if (currentValue === 100) {
+                    return;
+                }
+                currentValue += Math.floor(Math.random() * 10) + 1; // Increment by a random value between 1 and 10
+                if (currentValue > 100) {
+                    currentValue = 100; // Cap at 100       
+                }
+                counterElement.textContent = currentValue;
+                let delay = Math.floor(Math.random() * 200) + 50; // Random delay between 500ms and 1500ms
+                setTimeout(updateCounter, delay);
+            }
+            updateCounter();
+        }
+        startLoader();
+
+gsap.to(".counter", 0.25, {
+    delay: 3.5,
+    opacity: 0,
+    onComplete: function() {
+        document.querySelector('.counter').style.display = 'none'; // Hide counter
+    }
+});
+
+gsap.to(".bar", 1.5, {
+    delay: 3.5,
+    height: 0,
+    stagger: {
+        amount: 0.1,
+    },
+    ease: "power4.inOut",
+    onComplete: function() {
+        const overlay = document.querySelector('.overlay');
+        overlay.style.pointerEvents = 'none';
+        overlay.style.zIndex = -1;
+        overlay.style.display = 'none'; // Add this to hide the overlay completely
+    }
+});
 
     </script>
 
