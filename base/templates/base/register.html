@@ -1,25 +1,64 @@
 {% extends 'base/main.html' %}
 {% block content %}
 
-<div class="header-bar">
-    <h1>Register</h1>
-</div>
+<div class="auth-wrapper">
+    <div class="auth-header">
+        <h1>Register</h1>
+    </div>
 
-<div class="card-body">
-    <form method="POST">
+    <form method="POST" class="auth-form register-form">
         {% csrf_token %}
-        <label>{{form.username.label}}</label>
-        {{form.username}}
-
-        <label>{{form.password1.label}}</label>
-        {{form.password1}}
-
-        <label>{{form.password2.label}}</label>
-        {{form.password2}}
-        <input class="button register-submit" type="submit" value="Register">
+        
+        <!-- Custom error notification for password strength -->
+        {% if form.errors %}
+        <div class="form-error-notification">
+            {% if form.password2.errors %}
+                Weak password detected. Please use a stronger password with:
+                <ul class="password-requirements">
+                    <li>At least 8 characters</li>
+                    <li>Both uppercase and lowercase letters</li>
+                    <li>Numbers or special characters</li>
+                </ul>
+            {% else %}
+                Please correct the errors below.
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="input-box {% if form.username.errors %}has-error{% endif %}">
+            <input type="text" class="input-field" id="id_username" name="username" required 
+                   value="{{ form.username.value|default_if_none:'' }}">
+            <label for="id_username" class="input-label">Username</label>
+            <i class='bx bx-user form-icon'></i>
+        </div>
+        
+        <div class="input-box {% if form.password1.errors %}has-error{% endif %}">
+            <input type="password" class="input-field" id="id_password1" name="password1" required>
+            <label for="id_password1" class="input-label">Password</label>
+            <i class='bx bx-lock-alt form-icon'></i>
+        </div>
+        
+        <div class="input-box {% if form.password2.errors %}has-error{% endif %}">
+            <input type="password" class="input-field" id="id_password2" name="password2" required>
+            <label for="id_password2" class="input-label">Confirm Password</label>
+            <i class='bx bx-lock-alt form-icon'></i>
+        </div>
+        
+        <button type="submit" class="btn-submit">Register <i class='bx bx-user-plus'></i></button>
     </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    
+    <div class="form-footer">
+        <span>Already have an account? <a href="{% url 'login' %}">Login</a></span>
+    </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var hasFormErrors = "{{ form.errors|yesno:'true,false' }}";
+        if (hasFormErrors) {
+            showRegisterForm();
+        }
+    });
+</script>
 
-{% endblock content %}
+{% endblock %}

@@ -1,0 +1,121 @@
+Register.html
+
+{% extends 'base/main.html' %}
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-header">
+        <h1>Register</h1>
+    </div>
+
+    <form method="POST" class="auth-form register-form">
+        {% csrf_token %}
+        
+        <!-- Display form-wide errors here -->
+        {% if form.errors %}
+        <div class="form-error-notification">
+            Please correct the errors below.
+        </div>
+        {% endif %}
+        
+        <div class="input-box {% if form.username.errors %}has-error{% endif %}">
+            <input type="text" class="input-field" id="id_username" name="username" required 
+                   value="{{ form.username.value|default_if_none:'' }}">
+            <label for="id_username" class="input-label">Username</label>
+            <i class='bx bx-user form-icon'></i>
+            {% if form.username.errors %}
+                {{ form.username.errors }}
+            {% endif %}
+        </div>
+        
+        <div class="input-box {% if form.password1.errors %}has-error{% endif %}">
+            <input type="password" class="input-field" id="id_password1" name="password1" required>
+            <label for="id_password1" class="input-label">Password</label>
+            <i class='bx bx-lock-alt form-icon'></i>
+            {% if form.password1.errors %}
+                {{ form.password1.errors }}
+            {% endif %}
+        </div>
+        
+        <div class="input-box {% if form.password2.errors %}has-error{% endif %}">
+            <input type="password" class="input-field" id="id_password2" name="password2" required>
+            <label for="id_password2" class="input-label">Confirm Password</label>
+            <i class='bx bx-lock-alt form-icon'></i>
+            {% if form.password2.errors %}
+                {{ form.password2.errors }}
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn-submit">Register <i class='bx bx-user-plus'></i></button>
+        
+        <div class="form-footer">
+            <span>Already have an account? <a href="{% url 'login' %}">Login</a></span>
+        </div>
+    </form>
+</div>
+
+<script>
+    
+</script>
+
+{% endblock %}
+
+another register
+
+{% extends 'base/main.html' %}
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-header">
+        <h1>Register</h1>
+    </div>
+
+    <form method="POST" class="auth-form register-form">
+        {% csrf_token %}
+        
+        <!-- Error notification positioned right after header -->
+        {% if form.errors %}
+        <div class="form-error-notification">
+            Please correct the errors below.
+        </div>
+        {% endif %}
+        
+        <div class="input-box {% if form.username.errors %}has-error{% endif %}">
+            <input type="text" class="input-field" id="id_username" name="username" required 
+                   value="{{ form.username.value|default_if_none:'' }}">
+            <label for="id_username" class="input-label">Username</label>
+            <i class='bx bx-user form-icon'></i>
+        </div>
+        
+        <div class="input-box {% if form.password1.errors %}has-error{% endif %}">
+            <input type="password" class="input-field" id="id_password1" name="password1" required>
+            <label for="id_password1" class="input-label">Password</label>
+            <i class='bx bx-lock-alt form-icon'></i>
+        </div>
+        
+        <div class="input-box {% if form.password2.errors %}has-error{% endif %}">
+            <input type="password" class="input-field" id="id_password2" name="password2" required>
+            <label for="id_password2" class="input-label">Confirm Password</label>
+            <i class='bx bx-lock-alt form-icon'></i>
+        </div>
+        
+        <button type="submit" class="btn-submit">Register <i class='bx bx-user-plus'></i></button>
+    </form>
+    
+    <!-- Form footer moved outside form but inside wrapper -->
+    <div class="form-footer">
+        <span>Already have an account? <a href="{% url 'login' %}">Login</a></span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var hasFormErrors = "{{ form.errors|yesno:'true,false' }}";
+        if (hasFormErrors) {
+            showRegisterForm();
+        }
+    });
+</script>
+
+{% endblock %}
+
